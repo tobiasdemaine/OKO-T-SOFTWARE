@@ -1,0 +1,11 @@
+width=800
+height=600
+screens=1
+dualdesktop=0
+fullscreen=0
+camera1_pos=0 0 0
+camera1_rot=1 0 1 0
+camera1_fov=50.15
+camera2_pos=0 0 0
+camera2_rot=45 0 1 0
+camera2_fov=37.15

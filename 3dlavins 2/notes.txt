@@ -1,0 +1,12 @@
+// new functions for 3dlavins 2.1
+
+// accessbackbuffer(Id)
+
+// backbuffer_to_mesh(Id)
+
+// backbuffer_to_keymesh(Id)
+
+// keymeshtype(id type) 3ds // vertex and mapping points
+
+// introduction of worlds to load as an effect
+

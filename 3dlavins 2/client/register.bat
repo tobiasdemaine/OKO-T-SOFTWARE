@@ -1,0 +1,1 @@
+regsvr32.exe c:\oko_t\fm20.dll

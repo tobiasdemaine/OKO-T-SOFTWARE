@@ -1,0 +1,105 @@
+/* example gui */
+
+/*int containera, containerb, buttona, buttonb, buttonc, buttond, imagea, imageb, imagec, fonta, labela, vertslidera, horizslidera;
+int click=0;
+int sclick=0;
+int mycanvas;
+int video;
+int mymesh;
+
+
+void test_hover_function(void){
+	if (click == 1){
+		set_object_position(imageb, getmousex()-(get_object_width(imageb)/2), getmousey()-(get_object_height(imageb)/2));
+	}
+}
+
+void rewind_stop(void){
+	stream_rewind_stop(video);
+}
+
+void rewind(void){
+	stream_rewind(video);
+}
+
+void test_release_function(void){
+	if (click == 0){
+		click=1;
+		stream_stop(video);
+	}else{
+		click=0;
+		stream_play(video);
+	}
+}
+
+void set_speed(void){
+	if (sclick == 0){
+		sclick=1;
+		stream_set_speed(video, 8);
+	}else{
+		sclick=0;
+		stream_set_speed(video, 1);
+	}
+}
+
+void create_ui(void){
+	fonta = font_create("ui/font.tga");
+	
+	containera = container_create(50, 23, 200, 200, 1);
+	imagea = image_create(containera, 0,0 , 378, 200, 1, "ui/imagea.tga");
+	imageb = image_create(containera, 0,0 , 200, 200, 1, "ui/imageb.tga");
+	set_hover_function(imagea, &test_hover_function);
+	labela = label_create(containera, "This is a Test Label", fonta, 0, 0, 200, 1, 1);
+	
+	containerb = container_create(50, 0, 800, 600, 1);
+	buttona = button_create(containerb, "ui/button_hover.tga", "ui/button_off.tga", "ui/button_on.tga",0, 0, 77, 21, 0, 1, "button 1", 0);
+	set_depress_function(buttona, &rewind_stop);
+	
+	buttonb = button_create(containerb, "ui/button_hover.tga", "ui/button_off.tga", "ui/button_on.tga", 77, 0, 77, 21, 0, 1, "button 1", 0);
+
+	set_depress_function(buttonb, &rewind);
+	
+	buttonc = button_create(containerb, "ui/button_hover.tga", "ui/button_off.tga", "ui/button_on.tga", 154, 0, 77, 21, 0, 1, "button 1", 1);
+
+	set_release_function(buttonc, &test_release_function);
+	
+	buttond = button_create(containerb, "ui/button_hover.tga", "ui/button_off.tga", "ui/button_on.tga", 231, 0, 77, 21, 0, 1, "button 1", 1);
+
+	set_release_function(buttond, &set_speed);
+
+	vertslidera = verticle_slider_create(containerb, "ui/verticle_slider_button_off.tga", "ui/verticle_slider_button_hover.tga", 20, 11,"ui/verticle_slider_base.tga", 20,150, 50, 50, 0, 1.0, 1);
+	horizslidera = horizontal_slider_create(containerb, "ui/horizontal_slider_button_off.tga", "ui/horizontal_slider_button_hover.tga", 11, 20,"ui/horizontal_slider_base.tga", 150, 20, 60, 20, 0, 1, 1);
+	mycanvas = create_canvas(800, 600, 16, 9, 110);
+	
+	
+	video = stream_create(db_get_row_item(videodb,1,1));
+	stream_play(video);
+	
+	
+	mymesh = create_mesh(db_get_row_item(meshdb,1,1));
+	
+	
+	mesh_create_default_texture(mymesh, db_get_row_item(texturedb,1,1));
+	
+	
+}
+*/
+
+/*
+	open_canvas(mycanvas);
+	use_inbuilt_camera_path(1);
+
+	set_wireframe_render();
+	
+	mesh_set_rgba(mymesh, 1.0, 1.0, 1.0, get_slider_value(horizslidera));
+	printf("%f \n", get_slider_value(horizslidera));
+	draw_mesh(mymesh);
+	set_solid_render();
+	draw_oscilliscope_4_3d();
+
+	stream_set_rgba(video, 1.0, 1.0, 1.0, get_slider_value(vertslidera));
+	stream_display(video, 400, 300, 0, 0);
+	
+	close_canvas(mycanvas);
+	draw_canvas(mycanvas, 0, 0, 800, 600);
+	*/

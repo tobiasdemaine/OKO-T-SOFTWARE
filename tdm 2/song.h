@@ -1,0 +1,206 @@
+#ifndef _SONG_H_
+#define _SONG_H_
+#include "glx_base.h"
+typedef struct{
+	int video;
+	char *title;
+	int id;
+}media_video;
+
+typedef struct{
+	int mesh;
+	char *title;
+	int id;
+}media_mesh;
+
+typedef struct{
+	GLuint texture;
+	char *title;
+	int id;
+}media_texture;
+
+typedef struct{
+	int audio;
+	char *title;
+	int id;
+}media_audio;
+
+typedef struct{
+	/* GLOBALS */
+	int frameno;
+	int type; /* 1=video 2=mesh 3=texture 4=audio 5=camera 6=midi 7=dmx 8=master */
+	int db_id;
+	BOOL tween_to_next_frame;
+	int seek_frame;
+	BOOL visible;
+	float colour_r;	
+	float colour_g;	
+	float colour_b;	
+	float colour_a;	
+	float x;
+	float y;
+	float z;
+	int width;
+	int height;
+	float scalex;
+	float scaley;
+	float scalez;
+
+	BOOL rotation_auto_animation;
+	float rotation_degree;
+	float rotation_x;
+	float rotation_y;
+	float rotation_z;
+	float tmprot;
+
+	BOOL set_alpha_from_audio_level;
+	BOOL set_alpha_from_audio_beat;
+
+	int audio_scale_type;
+	float audio_multiplier;
+	int scale_from_fft;
+
+	BOOL use_inbuilt_beat_detection;
+	int  BPM;
+	BOOL use_audio_clip_params;
+	float clip_top;
+	int clip_left;
+	int clip_right;
+
+	BOOL solid_render;
+	
+	int beat_render;
+	/* video specific properties */
+	int current_frame;
+	int playback_speed;
+	int playback_direction;
+	int current_vid_frame;
+	
+	/* mesh specific properties */
+	
+	int use_texture;
+	int use_video_as_texture;
+
+	/* texture specific properties */
+
+	/* audio specific properties */
+	
+	/* camera specific properties */
+	int inbuilt_camera;
+	int last_camera;
+	/* midi properties */
+
+	/* dmx properties */
+}layer_frame;
+
+typedef struct{
+	char *layer_name;
+	int zindex;
+	layer_frame * frames;
+	int framecount;
+}song_layer;
+
+typedef struct{
+	int id;
+	char *title;
+	char *song_file;
+	song_layer *layers;
+	int layercount;
+	int masterseekto;
+	int externalseekto;
+	int currentframe;
+}song;
+
+void song_load_media_libraries(void);
+void song_load(int songid);
+void song_save(void);
+void song_save_as(void);
+void song_system_save(void);
+int song_new(void);
+
+int  get_song_slot_from_id(int songid);
+void set_channel_song(int mychannel, int mysong);
+char *song_get_name_by_slot(int slotid);
+char *song_get_name_by_id(int songid);
+int  song_get_count(void);
+int  get_song_id_from_slot(int slotid);
+int  song_get_from_channel(int mychannel);
+int  song_get_layercount(int songid);
+char *song_get_layer_name(int songid, int layer_slot);
+void song_new_layer(int songid);
+void song_delete_layer(int songid, int layerslot);
+int  song_get_object_count(int songid, int layer_slot, int frame_id);
+char *song_get_object_title(int songid, int layer_slot, int frame_id, int obj_slot);
+int  song_get_object_type(int songid, int layer_slot, int frame_id, int obj_slot);
+int  song_get_object_slot_from_frame_id(int songid, int layer_slot, int frame_id);
+void song_delete_frame_object(int songid, int layer_slot, int frame_number, int obj_slot);
+int  song_create_new_frame_obj(int songid, int layer_slot, int frame_number, int obj_type, int  mdb_id);
+int  song_get_object_frame_from_obj_slot(int songid, int layer_slot, int frame_id, int obj_slot);
+
+void song_play(int channel);
+void song_rewind(int channel);
+void song_pause(int channel);
+
+/* set by real pointer slots functions*/
+void song_set_title(int song_real, char * title);
+void song_set_object_camera_id(int song_real, int layer_slot, int obj_real, int camera_id);
+void song_set_object_colour(int song_real, int layer_slot, int obj_real,  float r, float g, float b, float a);
+void song_set_object_postion(int song_real, int layer_slot, int obj_real,  float x, float y, float z);
+void song_set_object_rotation(int song_real, int layer_slot, int obj_real,  float x, float y, float z, float degree, int rauto);
+void song_set_object_scale(int song_real, int layer_slot, int obj_real,  float sx, float sy, float sz);
+void song_set_object_texture(int song_real, int layer_slot, int obj_real, int textdbid);
+void song_set_object_render(int song_real, int layer_slot, int obj_real, int solid);
+void song_set_object_width_height(int song_real, int layer_slot, int obj_real, int width, int height);
+
+/* get by real pointer slots functions*/
+int song_get_object_camera_id(int song_real, int layer_slot, int obj_real);
+int song_get_object_render(int song_real, int layer_slot, int obj_real);
+float song_get_object_colour_r(int song_real, int layer_slot, int obj_real);
+float song_get_object_colour_g(int song_real, int layer_slot, int obj_real);
+float song_get_object_colour_b(int song_real, int layer_slot, int obj_real);
+float song_get_object_colour_a(int song_real, int layer_slot, int obj_real);
+float song_get_object_position_x(int song_real, int layer_slot, int obj_real);
+float song_get_object_position_y(int song_real, int layer_slot, int obj_real);
+float song_get_object_position_z(int song_real, int layer_slot, int obj_real);
+float song_get_object_rotation_x(int song_real, int layer_slot, int obj_real);
+float song_get_object_rotation_y(int song_real, int layer_slot, int obj_real);
+float song_get_object_rotation_z(int song_real, int layer_slot, int obj_real);
+int song_get_object_rotation_auto(int song_real, int layer_slot, int obj_real);
+float song_get_object_rotation_degree(int song_real, int layer_slot, int obj_real);
+float song_get_object_scale_x(int song_real, int layer_slot, int obj_real);
+float song_get_object_scale_y(int song_real, int layer_slot, int obj_real);
+float song_get_object_scale_z(int song_real, int layer_slot, int obj_real);
+
+int get_scale_from_fft(int song_real, int layer_slot, int obj_real);
+float get_scale_audio_multiplier(int song_real, int layer_slot, int obj_real);
+int get_audio_scale_type(int song_real, int layer_slot, int obj_real);
+int get_beat_render(int song_real, int layer_slot, int obj_real);
+
+void set_scale_from_fft(int song_real, int layer_slot, int obj_real, int myfft);
+void set_scale_audio_multiplier(int song_real, int layer_slot, int obj_real, float multiplier);
+void set_audio_scale_type(int song_real, int layer_slot, int obj_real, int sclip);
+void set_beat_render(int song_real, int layer_slot, int obj_real, int beatrend);
+
+/*lib functions */
+int song_get_video_lib_count(void);
+char *song_get_video_name_by_slot(int slot_id);
+int song_get_vid_id_from_slot(int slot_id);
+
+int song_get_mesh_lib_count(void);
+char *song_get_mesh_name_by_slot(int slot_id);
+int song_get_mesh_id_from_slot(int slot_id);
+
+int song_get_texture_lib_count(void);
+char *song_get_texture_name_by_slot(int slot_id);
+int song_get_texture_id_from_slot(int slot_id);
+
+int song_get_audio_lib_count(void);
+char *song_get_audio_name_by_slot(int slot_id);
+int song_get_audio_id_from_slot(int slot_id);
+
+void set_output_render(int renderit);
+
+void exec_channel_1_song(void);
+void exec_channel_2_song(void);
+void exec_channel_mix(void);
+#endif

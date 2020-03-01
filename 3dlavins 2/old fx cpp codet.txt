@@ -1,0 +1,356 @@
+// this is the main scenec and fx loop
+void callfx (int cam, float t_fov)
+{
+	glMatrixMode(GL_MODELVIEW);	
+
+	///disable all blending
+	glDisable(GL_BLEND);
+	glClear (GL_DEPTH_BUFFER_BIT);
+	
+	/// work around for the left behind buffers
+	glLoadIdentity();
+	glTranslatef (0.0f, 0.0f, -5001.00f);
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_FILL);
+	glDisable(GL_TEXTURE_2D);
+	glColor4f(0.0f,0.0f,0.0f,1.0f);
+	glBegin(GL_QUADS);										
+		// Front Face
+		glTexCoord2f(1.0f, 1.0f); glVertex3f( 53000.0*5,  43000.0*5, 0.0);
+		glTexCoord2f(0.0f, 1.0f); glVertex3f(-53000.0*5,  43000.0*5, 0.0);
+		glTexCoord2f(0.0f, 0.0f); glVertex3f(-53000.0*5, -43000.0*5, 0.0);
+		glTexCoord2f(1.0f, 0.0f); glVertex3f( 53000.0*5, -43000.0*5, 0.0);
+	glEnd();	
+	glEnable(GL_TEXTURE_2D);
+	glColor3f(1.0f,1.0f,1.0f);
+
+	rendermode();
+	
+	
+	
+	if (bg == true)														
+	{
+	glLoadIdentity();
+	glBlendFunc(GL_SRC_COLOR,GL_ONE);
+	glDisable(GL_DEPTH_TEST);							// Disables Depth Testing
+	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
+	glPushMatrix();										// Store The Projection Matrix
+	glLoadIdentity();
+	glOrtho(0,640,0,480,-1,5000);							// Set Up An Ortho Screen
+	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
+	glPushMatrix();	
+	glLoadIdentity();									// Reset The Modelview Matrix
+	glTranslated(0,0,1);
+	glEnable(GL_BLEND);
+		for(unsigned int uloop=0;uloop<20;uloop++){
+			if(underlay[uloop] == 1){ 
+				
+					glBindTexture(GL_TEXTURE_2D, v_texture[uloop][v_current_frame[uloop]]);
+					if (sysavi == 1){
+						if(sysaviId == uloop){
+							glBindTexture(GL_TEXTURE_2D, texture);
+						}
+					}
+				glCallList(overunder);
+			}
+		}
+	glMatrixMode(GL_PROJECTION);		
+	glPopMatrix();						
+	glMatrixMode(GL_MODELVIEW);			
+	glPopMatrix();
+	glLoadIdentity();
+	glEnable(GL_DEPTH_TEST);		
+
+	}
+
+	
+///////////// this is the 3d world
+
+		glLoadIdentity ();	
+
+///////////// camera
+///////////// 
+		if (cam == 1){
+			glRotatef(cam_rot[0][0],cam_rot[0][1],cam_rot[0][2],cam_rot[0][3]);
+		}
+		if (cam == 2){
+			glRotatef(cam_rot[1][0],cam_rot[1][1],cam_rot[1][2],cam_rot[1][3]);
+		}
+		if (cam == 3){
+			glRotatef(cam_rot[2][0],cam_rot[2][1],cam_rot[2][2],cam_rot[2][3]);
+		}
+		if (cam == 4){
+			glRotatef(cam_rot[3][0],cam_rot[3][1],cam_rot[3][2],cam_rot[3][3]);
+		}
+		
+		// call camera
+		oko_camera();
+		
+
+	//	GLfloat LightPosition[]= { 0, xtrans, ytrans, ztrans };
+ 	//glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
+
+		float rw = 600;
+		
+		int tstext=1;
+		
+		float myfft;
+		/// this is main loop for displaying all tscript 3d objects and videos
+	
+		for(unsigned int tmesh=0;tmesh<mesh_c;tmesh++){
+			glEnable(GL_TEXTURE_2D);
+			glColor3f(1.0f,1.0f,1.0f);
+			if (meshshow[tmesh]==1){
+			if (fxonoff[fx_mesh[tmesh]] == 1){
+				
+					glPushMatrix();
+					glDepthMask(TRUE);
+					glDepthRange(0.001,1);
+					glEnable(GL_DEPTH_TEST);
+
+					if (cameralock[tmesh] == 1) glTranslatef(xtrans, ytrans, ztrans);
+						glBindTexture(GL_TEXTURE_2D, t_texture[tmesh]);
+					if (applyvideo[tmesh] == 1){
+						// this where the mesh object get wrapped with a video
+						for(unsigned int vloop=0;vloop<20;vloop++){
+							if(fx_vid[fx_mesh[tmesh]][vloop] == 1){
+								tstext=0;
+								glBindTexture(GL_TEXTURE_2D, v_texture[vloop][v_current_frame[vloop]]);
+								if (sysavi == 1){
+								if(sysaviId == vloop){
+									glBindTexture(GL_TEXTURE_2D, texture);
+								}
+							}
+							}
+							
+						}
+						
+					}else{
+						glBindTexture(GL_TEXTURE_2D, t_texture[tmesh]);
+					}
+					//blendtype will go here
+					glBlendFunc(GL_SRC_COLOR,GL_ONE);				
+					glTranslatef(tposition[tmesh][0],tposition[tmesh][1],tposition[tmesh][2]);
+					
+					glRotatef(angle*trotate[tmesh][0],trotate[tmesh][1],trotate[tmesh][2],trotate[tmesh][3]);
+					
+					if (tblend[tmesh] == 1){
+						glEnable(GL_BLEND);
+					}else{
+						glDisable(GL_BLEND);
+					}
+					if (meshfft[tmesh] > 0){
+						myfft = fft[meshfft[tmesh]]/1.1;
+						glScaled(myfft, myfft, myfft);
+					}
+					if (beatscaled[tmesh] == 1){
+						glScaled(sound, sound, sound);
+					}
+					if (meshwire[tmesh] == 1){
+						glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+						glPolygonMode(GL_FRONT, GL_LINE);
+						glPolygonMode(GL_BACK, GL_LINE);
+							glDisable(GL_DEPTH_TEST);
+					}else{
+						if (bg){
+						glPolygonMode(GL_FRONT, GL_FILL);
+						glPolygonMode(GL_BACK, GL_FILL);
+
+						}
+					}
+					
+								
+					
+					
+					if (tcolor[tmesh][3] == 1){
+						glColor3f(tcolor[tmesh][0], tcolor[tmesh][1], tcolor[tmesh][2]) ;
+					}
+
+
+					
+
+					if (tmeshtype[tmesh] == 1){
+						glCallList(mesh_p[tmesh]);
+
+					}
+					if (tmeshtype[tmesh] == 2){
+						// we can do the nasty font stuff here
+						if (texttype[tmesh] == 1){
+							glScalef(textsize[tmesh], textsize[tmesh], textsize[tmesh]);
+							char test[120] = "";
+							// clear str test
+							strncpy(test, tekst + tekst_loc[tmesh][1], tekst_loc[tmesh][0]);
+							glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+							glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+							glEnable(GL_TEXTURE_GEN_S);
+							glEnable(GL_TEXTURE_GEN_T);
+							gl3dPrint(test, textfont[tmesh]);
+							glDisable(GL_TEXTURE_GEN_S);
+							glDisable(GL_TEXTURE_GEN_T);
+						}
+					}
+
+					if (tmeshtype[tmesh] == 3){
+						glDisable(GL_BLEND);
+						for(int step=0;step<26;step++){
+							for(int ss=18; ss>0; ss--){
+							   os[ss][step] = os[ss - 1][step];
+							   glDisable(GL_TEXTURE_2D);
+							   glBegin(GL_LINES);
+									glVertex3f((step * (100 / 25) * (rw / 100)) - 150, (os[ss][step] * 100), ss * 20);					
+									glVertex3f((((step + 1) * (100 / 25)) * (rw / 100)) - 150, os[ss][step + 1] * 100, (ss * 20));
+								glEnd();
+							}
+							os[0][step] = fft[step];
+						}
+					}
+		
+					glColor3f(1.0f,1.0f,1.0f);
+					
+					glPopMatrix();
+				}
+					
+			}
+			glDisable(GL_TEXTURE_2D);
+		}
+
+
+		
+if (bg == true){
+	glBlendFunc(GL_SRC_COLOR,GL_ONE);									
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_FILL);
+
+	glEnable(GL_TEXTURE_2D);
+	glLoadIdentity();
+	glDisable(GL_DEPTH_TEST);			
+	glMatrixMode(GL_PROJECTION);		
+	glPushMatrix();						
+	glLoadIdentity();
+	glOrtho(0,640,0,480,-1,5000);		
+	glMatrixMode(GL_MODELVIEW);			
+	glPushMatrix();	
+	glLoadIdentity();					
+	glTranslated(0,0,1);
+	
+	glEnable(GL_BLEND);
+		
+		for(unsigned int oloop=0;oloop<20;oloop++){
+			if(overlay[oloop] == 1){   
+				glBindTexture(GL_TEXTURE_2D, v_texture[oloop][v_current_frame[oloop]]);
+				if (sysavi == 1){
+					if(sysaviId == oloop){
+						glBindTexture(GL_TEXTURE_2D, texture);
+					}
+				}
+				glCallList(overunder);
+			}
+
+		}
+	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
+	glPopMatrix();										// Restore The Old Projection Matrix
+	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
+	glPopMatrix();
+	glLoadIdentity();
+	glEnable(GL_DEPTH_TEST);		
+	glDisable(GL_TEXTURE_2D);
+}
+
+/// info setup for
+	glPolygonMode(GL_FRONT, GL_FILL);
+	glPolygonMode(GL_BACK, GL_FILL);
+	char mes[200];
+
+
+	glDisable(GL_BLEND);									
+	glDisable(GL_DEPTH_TEST);							// Disables Depth Testing
+	glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
+	glPushMatrix();										// Store The Projection Matrix
+	glLoadIdentity();
+	glOrtho(0,100,0,100,-500,500);							// Set Up An Ortho Screen
+	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
+	glPushMatrix();										// Store The Modelview Matrix
+	glLoadIdentity();									// Reset The Modelview Matrix
+	for(tmesh=0;tmesh<mesh_c;tmesh++){
+		if (meshshow[tmesh]==1){
+		if (tmeshtype[tmesh] == 2){
+			if (texttype[tmesh] == 2){
+				if (fxonoff[fx_mesh[tmesh]] == 1){
+				glPushMatrix();
+				
+						glTranslatef(tposition[tmesh][0],tposition[tmesh][1],tposition[tmesh][2]);
+						glRotatef(angle*trotate[tmesh][0],trotate[tmesh][1],trotate[tmesh][2],trotate[tmesh][3]);	
+						glColor3f(tcolor[tmesh][0], tcolor[tmesh][1], tcolor[tmesh][2]) ;
+						glScalef(textsize[tmesh], textsize[tmesh], textsize[tmesh]);
+						if (beatscaled[tmesh] == 1){
+						glScaled(sound, sound, sound);
+						}
+						if (meshwire[tmesh] == 1){
+							glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+							glPolygonMode(GL_FRONT, GL_LINE);
+							glPolygonMode(GL_BACK, GL_LINE);
+						}
+						char test[120] = "";
+						strncpy(test, tekst + tekst_loc[tmesh][1], tekst_loc[tmesh][0]);
+						glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+						glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+						glEnable(GL_TEXTURE_GEN_S);
+						glEnable(GL_TEXTURE_GEN_T);
+						gl3dPrint(test, textfont[tmesh]);
+						glDisable(GL_TEXTURE_GEN_S);
+						glDisable(GL_TEXTURE_GEN_T);
+										
+				
+				glPopMatrix();
+				}
+			}
+		}
+		}
+	}
+
+
+	if (infoshow==1){
+	
+	glPushMatrix();	
+		glTranslated(5,5,0);
+		glColor4f(1.0f,1.0f,0.0f,1.0f);	
+		glScalef(5, 5, 5);	
+		sprintf(mes,"oko t : %s",appname);
+		gl3dPrint(mes, 0);
+	glPopMatrix();
+	
+	glPushMatrix();	
+		glTranslated(5,10,0);
+		glColor4f(1.0f,1.0f,0.0f,1.0f);	
+		glScalef(3, 3, 3);	
+		sprintf(mes,"owner: %s",owner);
+		gl3dPrint(mes, 0);
+	glPopMatrix();
+
+	glPushMatrix();	
+		glTranslated(5,13,0);
+		glColor4f(1.0f,1.0f,0.0f,1.0f);	
+		glScalef(3, 3, 3);		
+		sprintf(mes,"sound: %f",sound);
+		gl3dPrint(mes, 0);
+	glPopMatrix();
+
+	glPushMatrix();	
+		glTranslated(5,16,0);
+		glColor4f(1.0f,1.0f,0.0f,1.0f);	
+		glScalef(3, 3, 3);		
+		sprintf(mes,"fov: %f",t_fov);
+		gl3dPrint(mes, 0);
+	glPopMatrix();
+	
+	
+	}
+	
+
+glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
+	glPopMatrix();										// Restore The Old Projection Matrix
+	glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
+	glPopMatrix();
+
+glColor3f(1.0f,1.0f,1.0f);	
+}
